@@ -17,8 +17,7 @@ This app have AI bot helper body that helps you to find the best time for your e
 - nuxt-auth-utils
 - VueUse
 - Nuxt UI
-- drizzle-orm
-- postgres
+- Supabase
 - git actions for CI/CD
 - ![fullCalendar](https://fullcalendar.io/docs/vue)
 
