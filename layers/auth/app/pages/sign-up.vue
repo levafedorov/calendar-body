@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AuthFormField } from '#layers/ui/types'
+import type { AuthFormField, AuthProvider } from '#layers/ui/types'
 
 const fields: AuthFormField[] = [
   {
@@ -24,16 +24,37 @@ const fields: AuthFormField[] = [
     required: true
   }
 ]
+
+const providers: AuthProvider[] = [
+  {
+    label: 'Continue with Google',
+    icon: 'i-simple-icons-google',
+    color: 'neutral',
+    variant: 'outline'
+  }
+]
+
+interface SignupFormModel {
+  name: string
+  email: string
+  password: string
+}
+
+function handleSubmit(payload: { data: SignupFormModel }): void {
+  console.log(payload)
+}
 </script>
 
 <template>
   <main class="min-h-screen flex items-center justify-center p-4">
     <PageCard card-class="w-full max-w-md">
-      <SignupForm
+      <AuthForm
         title="Sign up"
         description="Create your account."
         icon="i-lucide-user-plus"
         :fields="fields"
+        :providers="providers"
+        @submit="handleSubmit"
       />
     </PageCard>
   </main>

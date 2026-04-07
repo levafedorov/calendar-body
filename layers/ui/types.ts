@@ -1,19 +1,17 @@
-import type { AuthFormField as AuthFormFieldType } from '@nuxt/ui'
+import type {
+  AuthFormField as AuthFormFieldType,
+  ButtonProps as ButtonPropsType
+} from '@nuxt/ui'
 
 export type AuthFormField = AuthFormFieldType
+export type AuthProvider = ButtonPropsType
 
-export interface SigninFormProps {
+export interface AuthFormProps {
   title: string
   description: string
   icon: string
   fields: AuthFormField[]
-}
-
-export interface SignupFormProps {
-  title: string
-  description: string
-  icon: string
-  fields: AuthFormField[]
+  providers?: AuthProvider[]
 }
 
 export interface PageCardProps {

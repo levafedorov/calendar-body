@@ -10,3 +10,5 @@ Components in UI layer, where ui libs componetns are applyed are used like bound
 
 Don't use pure nuxt-ui components, use the components in the UI layer.
 
+When component business logic gets thick, move it into a composable and keep the component focused on props/emits wiring and presentation.
+

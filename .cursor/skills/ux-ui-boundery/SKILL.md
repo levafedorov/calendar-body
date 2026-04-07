@@ -1,11 +1,11 @@
 ---
 name: ui-boundery
-description: Enforces a UI boundary pattern between app features and any external UI library. Use when creating or editing a presentation/adapter layer that wraps third-party UI components, defines local typed props APIs, and maps wrapper props to underlying vendor components.
+description: General UI boundary standard for keeping vendor UI libraries isolated in layers/ui and exposing local typed wrapper APIs to feature layers.
 ---
 
 # UX/UI Boundery Skill
 
-## Goal
+## Purpose
 
 Keep a dedicated UI boundary layer between app/domain code and external UI libraries:
 - feature/page code passes app-level data
@@ -29,6 +29,23 @@ Keep a dedicated UI boundary layer between app/domain code and external UI libra
 - **Thin wrappers:** wrappers should stay minimal and mostly map props to vendor UI components.
 - **Composition API:** use `<script setup lang="ts">`.
 
+## Non-Negotiable Boundary Rules
+
+1. Non-UI layers consume components from `layers/ui`, not vendor libraries.
+2. Wrapper component props and types are owned by the UI boundary and defined locally.
+3. Use explicit typed props (`<script setup lang="ts">` + `defineProps`) for primary APIs.
+4. Map local wrapper props to vendor component props inside wrappers.
+5. Keep wrappers thin, predictable, and easy to swap to another UI library.
+6. If a shared type is needed, define or import it from a local UI-layer types module.
+
+## Implementation Workflow
+
+1. Understand the request and identify what belongs in `layers/ui`.
+2. Create or update local UI wrapper components and local UI types.
+3. Update consuming feature code to import only boundary components and types.
+4. Remove or avoid direct vendor imports in non-UI layers.
+5. Run lint/type checks on changed files and fix introduced issues.
+
 ## Generic Canonical Example
 
 - `FormWrapper` components
@@ -50,6 +67,7 @@ Keep a dedicated UI boundary layer between app/domain code and external UI libra
 - [ ] Wrapper has explicit `defineProps` API
 - [ ] Wrapper maps props to vendor component explicitly
 - [ ] Page passes required wrapper props
+- [ ] No direct vendor UI imports exist in non-UI layers
 - [ ] Lint/typecheck passes for changed files
 
 ## Example Mapping
