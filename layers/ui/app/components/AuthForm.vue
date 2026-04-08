@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { AuthFormProps } from '../../types'
+import type { AuthFormProps, FormSubmitEventType } from '../../types'
 
 const props = defineProps<AuthFormProps>()
 const emit = defineEmits<{
   <T>(e: 'submit', payload: { data: T }): void
 }>()
 
-function handleSubmit<T>(payload: { data: T }): void {
+function handleSubmit<T>(payload: FormSubmitEventType<T>): void {
   emit('submit', payload)
 }
 </script>
@@ -18,6 +18,7 @@ function handleSubmit<T>(payload: { data: T }): void {
     :icon="props.icon"
     :fields="props.fields"
     :providers="props.providers"
+    :schema="props.schema"
     @submit="handleSubmit"
   />
 </template>
