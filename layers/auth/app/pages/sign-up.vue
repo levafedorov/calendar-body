@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import type { AuthFormField, AuthProvider } from '#layers/ui/types'
+import type { AuthFormField, AuthProvider, FormSubmitEventType } from '#layers/ui/types'
+import type { SignupValidationModel } from '../../shared/validationModels'
+import { signupValidationSchema } from '../../shared/validationSchemas'
 
 const fields: AuthFormField[] = [
-  {
-    name: 'name',
-    type: 'text',
-    label: 'Name',
-    placeholder: 'Enter your name',
-    required: true
-  },
   {
     name: 'email',
     type: 'email',
@@ -22,6 +17,13 @@ const fields: AuthFormField[] = [
     label: 'Password',
     placeholder: 'Create a password',
     required: true
+  },
+  {
+    name: 'confirmPassword',
+    type: 'password',
+    label: 'Confirm password',
+    placeholder: 'Confirm your password',
+    required: true
   }
 ]
 
@@ -34,14 +36,9 @@ const providers: AuthProvider[] = [
   }
 ]
 
-interface SignupFormModel {
-  name: string
-  email: string
-  password: string
-}
-
-function handleSubmit(payload: { data: SignupFormModel }): void {
-  console.log(payload)
+function onSubmit(payload: FormSubmitEventType<SignupValidationModel>): void {
+  const { data } = payload
+  console.log(data)
 }
 </script>
 
@@ -54,7 +51,8 @@ function handleSubmit(payload: { data: SignupFormModel }): void {
         icon="i-lucide-user-plus"
         :fields="fields"
         :providers="providers"
-        @submit="handleSubmit"
+        :schema="signupValidationSchema"
+        @submit="onSubmit"
       />
     </PageCard>
   </main>

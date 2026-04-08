@@ -6,7 +6,7 @@ const emit = defineEmits<{
   <T>(e: 'submit', payload: FormSubmitEventType<T>): void
 }>()
 
-function handleSubmit<T>(payload: FormSubmitEventType<T>): void {
+function onSubmit<T>(payload: FormSubmitEventType<T>): void {
   emit('submit', payload)
 }
 </script>
@@ -19,6 +19,6 @@ function handleSubmit<T>(payload: FormSubmitEventType<T>): void {
     :fields="props.fields"
     :providers="props.providers"
     :schema="props.schema"
-    @submit="handleSubmit"
+    @submit="onSubmit"
   />
 </template>

@@ -33,7 +33,8 @@ interface SigninFormModel {
 }
 
 function handleSubmit(payload: { data: SigninFormModel }): void {
-  console.log(payload)
+  const { data } = payload
+  console.log(data)
 }
 </script>
 
