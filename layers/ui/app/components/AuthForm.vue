@@ -3,7 +3,7 @@ import type { AuthFormProps, FormSubmitEventType } from '../../types'
 
 const props = defineProps<AuthFormProps>()
 const emit = defineEmits<{
-  <T>(e: 'submit', payload: { data: T }): void
+  <T>(e: 'submit', payload: FormSubmitEventType<T>): void
 }>()
 
 function handleSubmit<T>(payload: FormSubmitEventType<T>): void {
