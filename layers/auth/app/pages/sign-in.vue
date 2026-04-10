@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import type { AuthFormField, AuthProvider } from '#layers/ui/types'
+import type { AuthFormField, AuthProvider, FormSubmitEventType } from '#layers/ui/types'
+import type { SigninValidationModel } from '../../shared/validationModels'
+import { signinValidationSchema } from '../../shared/validationSchemas'
 
 const fields: AuthFormField[] = [
   {
@@ -27,12 +29,7 @@ const providers: AuthProvider[] = [
   }
 ]
 
-interface SigninFormModel {
-  email: string
-  password: string
-}
-
-function handleSubmit(payload: { data: SigninFormModel }): void {
+function onSubmit(payload: FormSubmitEventType<SigninValidationModel>): void {
   const { data } = payload
   console.log(data)
 }
@@ -47,7 +44,8 @@ function handleSubmit(payload: { data: SigninFormModel }): void {
         icon="i-lucide-log-in"
         :fields="fields"
         :providers="providers"
-        @submit="handleSubmit"
+        :schema="signinValidationSchema"
+        @submit="onSubmit"
       />
     </PageCard>
   </main>

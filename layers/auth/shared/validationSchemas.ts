@@ -13,3 +13,8 @@ export const signupValidationSchema = z.object({
 }).check(
   z.refine(data => data.password === data.confirmPassword)
 )
+
+export const signinValidationSchema = z.object({
+  email: emailValidation,
+  password: passwordValidation
+})
