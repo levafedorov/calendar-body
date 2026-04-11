@@ -1,6 +1,10 @@
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
 export default defineNuxtConfig({
   modules: [
-    '@nuxt/eslint'
+    '@nuxt/eslint',
+    '@nuxtjs/supabase'
   ],
 
   $meta: {
@@ -18,9 +22,10 @@ export default defineNuxtConfig({
         braceStyle: '1tbs'
       }
     }
-  }
+  },
 
-//   supabase: {
-//     redirect: false
-//   }
+  supabase: {
+    redirect: false,
+    types: join(dirname(fileURLToPath(import.meta.url)), './types/supabase.ts')
+  }
 })
