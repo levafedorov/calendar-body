@@ -36,9 +36,20 @@ const providers: AuthProvider[] = [
   }
 ]
 
-function onSubmit(payload: FormSubmitEventType<SignupValidationModel>): void {
+const serverError = ref<string | null>(null)
+
+async function onSubmit(payload: FormSubmitEventType<SignupValidationModel>): Promise<void> {
+  serverError.value = null
   const { data } = payload
-  console.log(data)
+  try {
+    // TODO: replace with real sign-up (e.g. Supabase client.auth.signUp) when backend is wired
+    await Promise.resolve()
+    console.log(data)
+  } catch (error: unknown) {
+    const message
+      = error instanceof Error ? error.message : 'Something went wrong. Please try again.'
+    serverError.value = message
+  }
 }
 </script>
 
@@ -53,7 +64,16 @@ function onSubmit(payload: FormSubmitEventType<SignupValidationModel>): void {
         :providers="providers"
         :schema="signupValidationSchema"
         @submit="onSubmit"
-      />
+      >
+        <template #error>
+          <p
+            v-if="serverError"
+            class="text-sm text-error"
+          >
+            {{ serverError }}
+          </p>
+        </template>
+      </AuthForm>
     </PageCard>
   </main>
 </template>
