@@ -3,6 +3,8 @@ import type { AuthFormField, AuthProvider, FormSubmitEventType } from '#layers/u
 import type { SignupValidationModel } from '../../shared/validationModels'
 import { signupValidationSchema } from '../../shared/validationSchemas'
 
+const supabase = useSupabaseClient()
+
 const fields: AuthFormField[] = [
   {
     name: 'email',
@@ -36,9 +38,15 @@ const providers: AuthProvider[] = [
   }
 ]
 
-function onSubmit(payload: FormSubmitEventType<SignupValidationModel>): void {
+async function onSubmit(payload: FormSubmitEventType<SignupValidationModel>): Promise<void> {
   const { data } = payload
-  console.log(data)
+  const { error } = await supabase.auth.signUp({
+    email: data.email,
+    password: data.password
+  })
+  if (error) {
+    console.error(error)
+  }
 }
 </script>
 
