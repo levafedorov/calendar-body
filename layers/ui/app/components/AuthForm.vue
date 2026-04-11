@@ -20,5 +20,12 @@ function onSubmit<T>(payload: FormSubmitEventType<T>): void {
     :providers="props.providers"
     :schema="props.schema"
     @submit="onSubmit"
-  />
+  >
+    <template
+      v-for="(_, slotName) in $slots"
+      #[slotName]="slotProps"
+    >
+      <slot :name="slotName" v-bind="slotProps" />
+    </template>
+  </UAuthForm>
 </template>
