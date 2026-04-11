@@ -3,6 +3,8 @@ import type { AuthFormField, AuthProvider, FormSubmitEventType } from '#layers/u
 import type { SignupValidationModel } from '../../shared/validationModels'
 import { signupValidationSchema } from '../../shared/validationSchemas'
 
+const supabase = useSupabaseClient()
+
 const fields: AuthFormField[] = [
   {
     name: 'email',
@@ -42,13 +44,19 @@ async function onSubmit(payload: FormSubmitEventType<SignupValidationModel>): Pr
   serverError.value = null
   const { data } = payload
   try {
-    // TODO: replace with real sign-up (e.g. Supabase client.auth.signUp) when backend is wired
-    await Promise.resolve()
-    console.log(data)
+    const { error } = await supabase.auth.signUp({
+      email: data.email,
+      password: data.password
+    })
+
+    if (error) {
+      serverError.value = error.message
+      return
+    }
   } catch (error: unknown) {
-    const message
-      = error instanceof Error ? error.message : 'Something went wrong. Please try again.'
-    serverError.value = message
+    serverError.value = error instanceof Error
+      ? error.message
+      : 'Something went wrong. Please try again.'
   }
 }
 </script>
