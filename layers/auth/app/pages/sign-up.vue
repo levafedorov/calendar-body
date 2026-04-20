@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AuthFormField, AuthProvider, FormSubmitEventType } from '#layers/ui/types'
+import type { AuthFormField, ButtonProps, FormSubmitEvent } from '@nuxt/ui'
 import type { SignupValidationModel } from '../../shared/validationModels'
 import { signupValidationSchema } from '../../shared/validationSchemas'
 
@@ -29,7 +29,7 @@ const fields: AuthFormField[] = [
   }
 ]
 
-const providers: AuthProvider[] = [
+const providers: ButtonProps[] = [
   {
     label: 'Continue with Google',
     icon: 'i-simple-icons-google',
@@ -40,13 +40,13 @@ const providers: AuthProvider[] = [
 
 const serverError = ref<string | null>(null)
 
-async function onSubmit(payload: FormSubmitEventType<SignupValidationModel>): Promise<void> {
+async function onSubmit(payload: FormSubmitEvent<SignupValidationModel>): Promise<void> {
   serverError.value = null
-  const { data } = payload
+  const { data: formData } = payload
   try {
     const { error } = await supabase.auth.signUp({
-      email: data.email,
-      password: data.password
+      email: formData.email,
+      password: formData.password
     })
 
     if (error) {
@@ -63,8 +63,8 @@ async function onSubmit(payload: FormSubmitEventType<SignupValidationModel>): Pr
 
 <template>
   <main class="min-h-screen flex items-center justify-center p-4">
-    <PageCard card-class="w-full max-w-md">
-      <AuthForm
+    <UPageCard class="w-full max-w-md">
+      <UAuthForm
         title="Sign up"
         description="Create your account."
         icon="i-lucide-user-plus"
@@ -73,15 +73,15 @@ async function onSubmit(payload: FormSubmitEventType<SignupValidationModel>): Pr
         :schema="signupValidationSchema"
         @submit="onSubmit"
       >
-        <template #error>
-          <p
-            v-if="serverError"
-            class="text-sm text-error"
-          >
+        <template
+          v-if="serverError"
+          #validation
+        >
+          <p class="text-sm text-error">
             {{ serverError }}
           </p>
         </template>
-      </AuthForm>
-    </PageCard>
+      </UAuthForm>
+    </UPageCard>
   </main>
 </template>

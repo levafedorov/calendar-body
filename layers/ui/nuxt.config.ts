@@ -17,6 +17,13 @@ export default defineNuxtConfig({
       pathPrefix: false
     }
   ],
-  css: [join(currentDir, './assets/css/main.css')]
-
+  css: [join(currentDir, './assets/css/main.css')],
+  runtimeConfig: {
+    public: {
+      supabase: {
+        url: '',
+        key: ''
+      }
+    }
+  }
 })
