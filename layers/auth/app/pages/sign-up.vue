@@ -3,6 +3,8 @@ import type { AuthFormField, ButtonProps, FormSubmitEvent } from '@nuxt/ui'
 import type { SignupValidationModel } from '../../shared/validationModels'
 import { signupValidationSchema } from '../../shared/validationSchemas'
 
+const router = useRouter()
+
 const supabase = useSupabaseClient()
 
 const fields: AuthFormField[] = [
@@ -53,6 +55,7 @@ async function onSubmit(payload: FormSubmitEvent<SignupValidationModel>): Promis
       serverError.value = error.message
       return
     }
+    router.push('/confirm')
   } catch (error: unknown) {
     serverError.value = error instanceof Error
       ? error.message
