@@ -1,90 +1,54 @@
 ---
 name: ui-boundery
-description: General UI boundary standard for keeping vendor UI libraries isolated in layers/ui and exposing local typed wrapper APIs to feature layers.
+description: Strategy for the layers/ui layer — when to create custom components vs use Nuxt UI directly.
 ---
 
-# UX/UI Boundery Skill
+# UX/UI Layer Strategy
 
-## Purpose
+## Core Principle
 
-Keep a dedicated UI boundary layer between app/domain code and external UI libraries:
-- feature/page code passes app-level data
-- wrapper components expose local typed APIs
-- wrappers map local props to vendor component APIs internally
+`layers/ui` is the home for the project's **design system** — custom components that add real value on top of Nuxt UI. It is **not** a blanket wrapper layer around every Nuxt UI component.
 
-## Pattern Summary
+Nuxt UI components (`UAuthForm`, `UPageCard`, `UButton`, etc.) are used **directly** in feature/page layers. Wrappers are only introduced when they genuinely earn their place.
 
-1. Define shared boundary types in a local types module (for example: `<layer>/types.ts`).
-2. In wrapper components, import types from that local module, not directly from the UI library.
-3. Use explicit props APIs (`defineProps<...>()`) in wrappers.
-4. Map wrapper props directly to vendor component props.
-5. Do not rely on fallthrough attrs for high-level wrapper configuration.
-6. Feature/page components pass explicit props to wrappers (for example: `title`, `description`, `icon`, `fields`, `containerClass`).
+## When to Add a Component to `layers/ui`
 
-## Required Conventions
+Add a component here **only if at least one of these is true:**
 
-- **Boundary ownership:** wrapper prop names and types are owned by the boundary layer.
-- **Local types first:** app and wrapper files should import shared types from the layer-local types module.
-- **No implicit forwarding:** avoid `useAttrs()` / `v-bind="attrs"` for primary wrapper API.
-- **Thin wrappers:** wrappers should stay minimal and mostly map props to vendor UI components.
+1. **It customises behaviour or appearance** — e.g. an `<AppButton>` that always injects the brand loading spinner, or an `<AppInput>` with the project's validation error style baked in.
+2. **It composes multiple primitives** into a reusable pattern specific to this project — e.g. a `<StatCard>` that combines a `UCard`, a `UIcon`, and a trend badge in a consistent layout.
+3. **It enforces a project-wide constraint** — e.g. a `<PageLayout>` that always wraps content with the correct max-width and padding tokens.
+
+## When NOT to Add a Component to `layers/ui`
+
+Do **not** create a wrapper if:
+
+- The wrapper just passes props through to a Nuxt UI component with no added logic or style.
+- The only purpose is "we might want to swap the UI library later" — that is speculative abstraction.
+- The component name and API are identical to the vendor component.
+
+## What Lives in `layers/ui`
+
+- `assets/css/main.css` — theme tokens, Tailwind config, global styles
+- `nuxt.config.ts` — `@nuxt/ui` module registration (single source)
+- `types.ts` — types for custom components defined in this layer
+- `app/components/` — only genuinely custom components (see criteria above)
+
+## What Does NOT Live in `layers/ui`
+
+- Thin pass-through wrappers around Nuxt UI components
+- Re-exports of Nuxt UI types (import from `@nuxt/ui` directly in consuming layers)
+
+## Conventions
+
 - **Composition API:** use `<script setup lang="ts">`.
+- **Explicit props:** `defineProps<MyCustomProps>()` with types defined in `types.ts`.
+- **No implicit forwarding** (`useAttrs()` / `v-bind="$attrs"`) as the primary API surface.
+- **Import Nuxt UI types directly** from `@nuxt/ui` where needed — do not re-export them through `types.ts`.
 
-## Non-Negotiable Boundary Rules
+## Implementation Checklist (when adding a new component)
 
-1. Non-UI layers consume components from `layers/ui`, not vendor libraries.
-2. Wrapper component props and types are owned by the UI boundary and defined locally.
-3. Use explicit typed props (`<script setup lang="ts">` + `defineProps`) for primary APIs.
-4. Map local wrapper props to vendor component props inside wrappers.
-5. Keep wrappers thin, predictable, and easy to swap to another UI library.
-6. If a shared type is needed, define or import it from a local UI-layer types module.
-
-## Implementation Workflow
-
-1. Understand the request and identify what belongs in `layers/ui`.
-2. Create or update local UI wrapper components and local UI types.
-3. Update consuming feature code to import only boundary components and types.
-4. Remove or avoid direct vendor imports in non-UI layers.
-5. Run lint/type checks on changed files and fix introduced issues.
-
-## Generic Canonical Example
-
-- `FormWrapper` components
-  - explicit props like `title`, `description`, `icon`, `fields`
-  - internal mapping to a vendor form component
-
-- `CardWrapper` component
-  - explicit prop like `containerClass`
-  - internal mapping to a vendor card/container component
-
-- feature pages/views
-  - pass all form data from page to wrapper
-  - do not configure vendor UI components directly in pages
-
-## Implementation Checklist
-
-- [ ] Types added/updated in the boundary layer's shared types module
-- [ ] Wrapper imports local types (not direct external UI types unless intentionally re-exported locally)
-- [ ] Wrapper has explicit `defineProps` API
-- [ ] Wrapper maps props to vendor component explicitly
-- [ ] Page passes required wrapper props
-- [ ] No direct vendor UI imports exist in non-UI layers
-- [ ] Lint/typecheck passes for changed files
-
-## Example Mapping
-
-```vue
-<script setup lang="ts">
-import type { GenericFormWrapperProps } from '../types'
-
-const props = defineProps<GenericFormWrapperProps>()
-</script>
-
-<template>
-  <VendorAuthForm
-    :title="props.title"
-    :description="props.description"
-    :icon="props.icon"
-    :fields="props.fields"
-  />
-</template>
-```
+- [ ] The component meets at least one of the "When to Add" criteria above
+- [ ] Props type is defined in `layers/ui/types.ts`
+- [ ] Component uses `<script setup lang="ts">` with explicit `defineProps`
+- [ ] Lint/typecheck passes for touched files

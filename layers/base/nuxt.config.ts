@@ -25,7 +25,6 @@ export default defineNuxtConfig({
   },
 
   supabase: {
-    redirect: false,
     types: join(dirname(fileURLToPath(import.meta.url)), './types/supabase.ts')
   }
 })

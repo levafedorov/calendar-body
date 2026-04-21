@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import type { AuthFormField, AuthProvider, FormSubmitEventType } from '#layers/ui/types'
+import type { AuthFormField, ButtonProps, FormSubmitEvent } from '@nuxt/ui'
 import type { SignupValidationModel } from '../../shared/validationModels'
 import { signupValidationSchema } from '../../shared/validationSchemas'
+
+const router = useRouter()
 
 const supabase = useSupabaseClient()
 
@@ -29,7 +31,7 @@ const fields: AuthFormField[] = [
   }
 ]
 
-const providers: AuthProvider[] = [
+const providers: ButtonProps[] = [
   {
     label: 'Continue with Google',
     icon: 'i-simple-icons-google',
@@ -38,22 +40,34 @@ const providers: AuthProvider[] = [
   }
 ]
 
-async function onSubmit(payload: FormSubmitEventType<SignupValidationModel>): Promise<void> {
-  const { data } = payload
-  const { error } = await supabase.auth.signUp({
-    email: data.email,
-    password: data.password
-  })
-  if (error) {
-    console.error(error)
+const serverError = ref<string | null>(null)
+
+async function onSubmit(payload: FormSubmitEvent<SignupValidationModel>): Promise<void> {
+  serverError.value = null
+  const { data: formData } = payload
+  try {
+    const { error } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password
+    })
+
+    if (error) {
+      serverError.value = error.message
+      return
+    }
+    router.push('/confirm')
+  } catch (error: unknown) {
+    serverError.value = error instanceof Error
+      ? error.message
+      : 'Something went wrong. Please try again.'
   }
 }
 </script>
 
 <template>
   <main class="min-h-screen flex items-center justify-center p-4">
-    <PageCard card-class="w-full max-w-md">
-      <AuthForm
+    <UPageCard class="w-full max-w-md">
+      <UAuthForm
         title="Sign up"
         description="Create your account."
         icon="i-lucide-user-plus"
@@ -61,7 +75,16 @@ async function onSubmit(payload: FormSubmitEventType<SignupValidationModel>): Pr
         :providers="providers"
         :schema="signupValidationSchema"
         @submit="onSubmit"
-      />
-    </PageCard>
+      >
+        <template
+          v-if="serverError"
+          #validation
+        >
+          <p class="text-sm text-error">
+            {{ serverError }}
+          </p>
+        </template>
+      </UAuthForm>
+    </UPageCard>
   </main>
 </template>
