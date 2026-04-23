@@ -5,6 +5,8 @@ import interactionPlugin from '@fullcalendar/interaction'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import type { CalendarOptions, EventInput } from '@fullcalendar/core'
 
+
+
 const removeAfterDrop = ref(false)
 
 const events = reactive<EventInput[]>([{
@@ -44,5 +46,6 @@ function onEventReceive(info: CalendarEventReceiveArg): void {
     <UCard>
       <FullCalendar :options="calendarOptions" />
     </UCard>
+    <EventModal />
   </div>
 </template>
