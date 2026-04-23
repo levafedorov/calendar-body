@@ -6,10 +6,6 @@ Read the README.md file for more information.
 
 Use nuxt-ui mvp to work with ui/ux related functionality.
 
-Components in UI layer, where ui libs componetns are applyed are used like boundery between ui/ux libs and the app.
-
-Don't use pure nuxt-ui components, use the components in the UI layer.
-
 When component business logic gets thick, move it into a composable and keep the component focused on props/emits wiring and presentation.
 
 All event handler function names should start with `on` (for example: `onSubmit`, `onClick`).

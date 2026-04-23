@@ -12,5 +12,3 @@ export interface CalendarEvent {
   start: string
   end: string
 }
-
-
