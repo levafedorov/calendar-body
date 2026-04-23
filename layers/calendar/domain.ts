@@ -9,7 +9,8 @@ export interface CalendarEvent {
   calendarId: string
   title: string
   description: string
-  startsAt: Date
-  endsAt: Date
-  createdAt: Date
+  start: string
+  end: string
 }
+
+
